@@ -1,5 +1,8 @@
+"use client";
+
 import { Button, Card, Divider, TextInput, Textarea } from "@tremor/react";
 import Link from "next/link";
+import TagsInput from "./tags-input";
 
 const PostForm = () => {
   return (
@@ -31,6 +34,7 @@ const PostForm = () => {
                 Add skill keywords to make your job post more visible to
                 candidates.
               </p>
+              <TagsInput />
             </div>
             <div className="my-7 flex flex-col items-start gap-2">
               <h2 className="text-lg font-medium">Job Location *</h2>
@@ -41,12 +45,16 @@ const PostForm = () => {
               <TextInput placeholder="Email" type="email" />
             </div>
             <div className="my-7 flex items-center justify-between gap-2">
-              <Button>Preview</Button>
+              <Button variant="secondary" color="blue">
+                Preview
+              </Button>
               <div className="flex items-center gap-2">
-                <Button>Post Job!</Button>
                 <Link href="/">
-                  <Button variant="secondary">Cancel</Button>
+                  <Button variant="secondary" color="gray">
+                    Cancel
+                  </Button>
                 </Link>
+                <Button>Post Job!</Button>
               </div>
             </div>
           </form>

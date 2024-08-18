@@ -3,7 +3,7 @@ import Image from "next/image";
 
 const JobContentCard = () => {
   return (
-    <Card className="rounded-none">
+    <Card className="!rounded-none">
       <div className="flex flex-col gap-2">
         <div className="flex items-center gap-2">
           <Image
