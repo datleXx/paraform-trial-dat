@@ -5,6 +5,8 @@ import { type Metadata } from "next";
 
 import { TRPCReactProvider } from "~/trpc/react";
 import Header from "./_components/home/header";
+import ClientWrapper from "./_components/utils/ClientWrapper";
+import { NextUIProvider } from "@nextui-org/react";
 
 export const metadata: Metadata = {
   title: "ATS",
@@ -18,10 +20,14 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${GeistSans.variable}`}>
       <body>
-        <Header />
-        <TRPCReactProvider>
-          <main className="mt-[70px]">{children}</main>
-        </TRPCReactProvider>
+        <NextUIProvider>
+          <ClientWrapper>
+            <Header />
+            <TRPCReactProvider>
+              <main className="mt-[70px]">{children}</main>
+            </TRPCReactProvider>
+          </ClientWrapper>
+        </NextUIProvider>
       </body>
     </html>
   );

@@ -1,9 +1,9 @@
-import JobPreviewCard from "../_components/main/job-preview-card";
+import JobTab from "../_components/main/job-tab";
 
 const JobsPage = () => {
   return (
-    <div className="w-screen">
-      <JobPreviewCard />
+    <div>
+      <JobTab />
     </div>
   );
 };
