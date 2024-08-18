@@ -1,9 +1,17 @@
 import { Card } from "@tremor/react";
 import Image from "next/image";
 
-const JobPreviewCard = () => {
+const JobPreviewCard = ({
+  isActive,
+  onClick,
+}: {
+  isActive: boolean;
+  onClick: () => void;
+}) => {
   return (
-    <Card className="flex w-full cursor-pointer items-center gap-2 !rounded-none">
+    <Card
+      className={`flex w-full cursor-pointer items-center gap-2 !rounded-none ${isActive ? "bg-gray-100" : ""}`}
+    >
       <Image
         src="https://media.licdn.com/dms/image/v2/C560BAQG1SVZKSmiAfA/company-logo_100_100/company-logo_100_100/0/1630567848660/cdmguru_logo?e=1732147200&v=beta&t=5R5ZQZ5HLdQom5NP6TJJcsTkgCv-wNC20bhar_uefDM"
         alt="Job Preview Card"

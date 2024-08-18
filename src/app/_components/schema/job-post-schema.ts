@@ -2,7 +2,6 @@ import { z } from "zod";
 
 const jobPostSchema = z.object({
   companyName: z.string().min(1, "Company Name is required"),
-  role: z.string().min(1, "Role is required"),
   jobTitle: z.string().min(1, "Job Title is required"),
   jobDescription: z.string().min(1, "Job Description is required"),
   skills: z.array(

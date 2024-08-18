@@ -7,10 +7,10 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Controller, type SubmitHandler, useForm } from "react-hook-form";
 import { type Tag, TagInput } from "emblor";
 import { useState } from "react";
+import { api } from "~/trpc/react";
 
 type JobPostFormData = {
   companyName: string;
-  role: string;
   jobTitle: string;
   jobDescription: string;
   skills: { id: string; text: string }[];
@@ -19,6 +19,7 @@ type JobPostFormData = {
 };
 
 const PostForm = () => {
+  const postJob = api.job.createJob.useMutation();
   const {
     control,
     setValue,
@@ -50,7 +51,11 @@ const PostForm = () => {
   const [activeTagIndex, setActiveTagIndex] = useState<number | null>(null);
 
   const onSubmit: SubmitHandler<JobPostFormData> = (data) => {
-    console.log("Data: ", data);
+    try {
+      postJob.mutate(data);
+    } catch (error) {
+      console.log("Error: ", error);
+    }
   };
 
   return (
@@ -70,13 +75,6 @@ const PostForm = () => {
                 <p className="text-xs text-red-400">
                   {errors.companyName.message}
                 </p>
-              )}
-            </div>
-            <div className="my-7 flex w-full flex-col items-start gap-2">
-              <h2 className="text-lg font-medium">Role *</h2>
-              <TextInput placeholder="Company Position" {...register("role")} />
-              {errors.role && (
-                <p className="text-xs text-red-400">{errors.role.message}</p>
               )}
             </div>
             <div className="my-7 flex w-full flex-col items-start gap-2">
