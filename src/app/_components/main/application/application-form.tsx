@@ -15,8 +15,9 @@ import {
   postCandidate,
   postApplication,
 } from "~/helper/greenhouseHelper";
+import ApplicationFormSkeleton from "./skeleton/application-form-skeleton";
 const ApplicationForm = ({ id }: { id: string }) => {
-  const { data: job } = api.job.fetchJobById.useQuery({ id });
+  const { data: job, isLoading } = api.job.fetchJobById.useQuery({ id });
 
   const schema = generateApplicationFormSchema(job?.questions || []);
   const refResume = useRef<HTMLInputElement | null>(null);
@@ -86,10 +87,6 @@ const ApplicationForm = ({ id }: { id: string }) => {
     }
   };
 
-  if (!schema) {
-    return <div>Loading...</div>;
-  }
-
   const handleResumeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
@@ -122,6 +119,8 @@ const ApplicationForm = ({ id }: { id: string }) => {
       refCoverLetter.current.click();
     }
   };
+
+  if (isLoading) return <ApplicationFormSkeleton />;
 
   return (
     <div className="w-screen bg-gray-100">

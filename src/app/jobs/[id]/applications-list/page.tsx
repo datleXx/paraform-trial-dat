@@ -1,5 +1,6 @@
 "use client";
 
+import { Skeleton } from "@mui/material";
 import {
   Table,
   TableHead,
@@ -12,6 +13,7 @@ import {
   Text,
   Divider,
 } from "@tremor/react";
+import ApplicationListSkeleton from "~/app/_components/main/application/skeleton/application-list-skeleton";
 import { api } from "~/trpc/react";
 
 interface Props {
@@ -24,14 +26,9 @@ const ApplicationsList = ({ params }: Props) => {
   const { data: job, isLoading } = api.job.fetchJobById.useQuery({
     id: params.id,
   });
-  if (isLoading) return <div>Loading...</div>;
-  if (!job) return <div>Job not found</div>;
-
-  if (isLoading) return <div>Loading...</div>;
-  if (!job) return <div>Job not found</div>;
 
   const candidates =
-    job.Application?.flatMap((app) =>
+    job?.Application?.flatMap((app) =>
       app.CandidateToApplication.map((cta) => cta.candidate),
     ) ?? [];
 
@@ -39,7 +36,14 @@ const ApplicationsList = ({ params }: Props) => {
     <Card className="mx-auto h-full max-w-7xl !rounded-none">
       <div className="flex flex-col items-center gap-2">
         <Title>Applications</Title>
-        <Text>List of applications for {job?.title}</Text>
+        <Text>
+          List of applications for{" "}
+          {job?.title ? (
+            job.title
+          ) : (
+            <Skeleton variant="text" width={100} height={20} />
+          )}
+        </Text>
       </div>
       <Divider />
       <Table className="scrollbar-hide h-[calc(100vh-200px)] w-full overflow-y-scroll">
@@ -74,39 +78,43 @@ const ApplicationsList = ({ params }: Props) => {
             </TableCell>
           </TableRow>
         </TableHead>
-        <TableBody className="max-h-[calc(100vh-200px)] w-full">
-          {candidates.map((candidate) => (
-            <TableRow key={candidate.id}>
-              <TableCell className="whitespace-normal font-medium">
-                {candidate.id}
-              </TableCell>
-              <TableCell className="whitespace-normal">
-                {candidate.first_name}
-              </TableCell>
-              <TableCell className="whitespace-normal">
-                {candidate.last_name}
-              </TableCell>
-              <TableCell className="whitespace-normal">
-                {candidate.email}
-              </TableCell>
-              <TableCell className="whitespace-normal">
-                {candidate.phone}
-              </TableCell>
-              <TableCell className="whitespace-normal">
-                {candidate.address}
-              </TableCell>
-              <TableCell className="whitespace-normal">
-                {candidate.company}
-              </TableCell>
-              <TableCell className="whitespace-normal">
-                {candidate.title}
-              </TableCell>
-              <TableCell className="whitespace-normal">
-                {candidate.social_media_address}
-              </TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
+        {isLoading ? (
+          <ApplicationListSkeleton />
+        ) : (
+          <TableBody className="max-h-[calc(100vh-200px)] w-full">
+            {candidates.map((candidate) => (
+              <TableRow key={candidate.id}>
+                <TableCell className="whitespace-normal font-medium">
+                  {candidate.id}
+                </TableCell>
+                <TableCell className="whitespace-normal">
+                  {candidate.first_name}
+                </TableCell>
+                <TableCell className="whitespace-normal">
+                  {candidate.last_name}
+                </TableCell>
+                <TableCell className="whitespace-normal">
+                  {candidate.email}
+                </TableCell>
+                <TableCell className="whitespace-normal">
+                  {candidate.phone}
+                </TableCell>
+                <TableCell className="whitespace-normal">
+                  {candidate.address}
+                </TableCell>
+                <TableCell className="whitespace-normal">
+                  {candidate.company}
+                </TableCell>
+                <TableCell className="whitespace-normal">
+                  {candidate.title}
+                </TableCell>
+                <TableCell className="whitespace-normal">
+                  {candidate.social_media_address}
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        )}
       </Table>
     </Card>
   );
