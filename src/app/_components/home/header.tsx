@@ -15,7 +15,7 @@ import { Card } from "@tremor/react";
 
 const Header = () => {
   return (
-    <div className="fixed left-0 right-0 top-0 z-10 bg-white p-4">
+    <div className="fixed left-0 right-0 top-0 z-10 border-b bg-white p-4">
       <div className="mx-auto max-w-7xl px-5">
         <div className="flex items-center justify-between">
           <div className="flex items-center justify-center gap-3">

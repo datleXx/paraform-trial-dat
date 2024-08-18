@@ -24,7 +24,7 @@ export default function RootLayout({
           <ClientWrapper>
             <Header />
             <TRPCReactProvider>
-              <main className="mt-[70px]">{children}</main>
+              <main className="mt-[65px]">{children}</main>
             </TRPCReactProvider>
           </ClientWrapper>
         </NextUIProvider>

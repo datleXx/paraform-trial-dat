@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { getApplications, getGreenhouseJobs } from "~/helper/greenhouseHelper";
+import { getGreenhouseJobs } from "~/helper/greenhouseHelper";
 import { db } from "~/server/db";
 export async function GET() {
   try {
@@ -32,16 +32,34 @@ export async function GET() {
             remote_job_id: remote_job_id,
           },
         });
-        
+
         for (const question of job.questions) {
-          await db.question.create({
-            data: {
+          const uniqueId = Buffer.from(
+            job.id.toString() + remote_job_id + question.name,
+          ).toString("base64");
+          await db.question.upsert({
+            where: {
+              id: uniqueId,
+            },
+            update: {
               label: question.label,
               name: question.name,
               type: question.type,
               job_id: remote_job_id,
               private: question.private,
-              required: question.required,
+              required: question.required ?? false,
+              description: question.description,
+              created_at: job.created_at,
+              updated_at: job.updated_at,
+            },
+            create: {
+              id: uniqueId,
+              label: question.label,
+              name: question.name,
+              type: question.type,
+              job_id: remote_job_id,
+              private: question.private,
+              required: question.required ?? false,
               description: question.description,
               created_at: job.created_at,
               updated_at: job.updated_at,

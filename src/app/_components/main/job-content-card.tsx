@@ -7,6 +7,8 @@ import {
   RiHeart2Line,
   RiHeartLine,
 } from "@remixicon/react";
+import Logo from "../home/logo";
+import Link from "next/link";
 
 const JobContentCard = ({
   totalJobs,
@@ -28,19 +30,23 @@ const JobContentCard = ({
       <div className="flex flex-col gap-2">
         <div className="flex items-center gap-2">
           {activeJob !== null && (
-            <div className="mr-3 md:hidden">
+            <div className="mr-3 flex items-center gap-2 font-light text-gray-500 md:hidden">
               <RiArrowLeftSLine
                 className="cursor-pointer"
                 onClick={() => setActiveJob(null)}
                 size={20}
               />
+              Back
             </div>
           )}
-          <h1 className="text-sm font-semibold transition-all hover:underline">
-            Paraform
-          </h1>
         </div>
-        <div>
+        <div className="mt-4 md:mt-0">
+          <div className="flex items-center gap-1.5">
+            <Logo size={20} />
+            <h1 className="text-base font-semibold leading-none transition-all hover:underline">
+              Paraform
+            </h1>
+          </div>
           <div className="flex items-center justify-start gap-2">
             <h1 className="cursor-pointer text-2xl font-medium transition-all hover:underline">
               {title}
@@ -49,9 +55,11 @@ const JobContentCard = ({
               <RiHeartLine className="h-6 w-6" />
             </button>
             <div className="ml-auto flex items-center gap-2">
-              <Button className="rounded-full hover:bg-blue-600">
-                Easy Apply
-              </Button>
+              <Link href={`/jobs/${activeJob}/application`}>
+                <Button className="rounded-full hover:bg-blue-600">
+                  Apply
+                </Button>
+              </Link>
             </div>
           </div>
           <p className="text-sm font-light text-gray-500">{location}</p>

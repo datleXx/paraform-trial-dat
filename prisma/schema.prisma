@@ -121,8 +121,8 @@ model CandidateToApplication {
     updated_at     DateTime    @updatedAt
     candidate_id   String
     application_id String
-    candidate      Candidate   @relation(fields: [candidate_id], references: [id])
-    application    Application @relation(fields: [application_id], references: [id])
+    candidate      Candidate   @relation(fields: [candidate_id], references: [id], onDelete: Cascade)
+    application    Application @relation(fields: [application_id], references: [id], onDelete: Cascade)
 }
 
 model Candidate {
@@ -157,10 +157,11 @@ model Attachment {
     id             String      @id @default(cuid())
     created_at     DateTime    @default(now())
     updated_at     DateTime    @updatedAt
+    type           String
     filename       String
     url            String
-    content        String
-    content_type   String
+    content        String?
+    content_type   String?
     application_id String
     application    Application @relation(fields: [application_id], references: [id], onDelete: Cascade)
 }

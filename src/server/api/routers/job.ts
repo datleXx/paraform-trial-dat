@@ -28,6 +28,18 @@ export const jobRouter = createTRPCRouter({
           where: {
             id: input.id,
           },
+          include: {
+            questions: true,
+            Application: {
+              include: {
+                CandidateToApplication: {
+                  include: {
+                    candidate: true,
+                  },
+                },
+              },
+            },
+          },
         });
         return job;
       } catch (error) {

@@ -105,6 +105,7 @@ const config: Config = {
     require("@headlessui/tailwindcss"),
     require("@tailwindcss/forms"),
     require("@nextui-org/react"),
+    require("tailwind-scrollbar-hide"),
   ],
 };
 

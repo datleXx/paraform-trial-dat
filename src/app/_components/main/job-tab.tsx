@@ -30,7 +30,7 @@ const JobTab = () => {
 
   return (
     <div className="w-screen bg-gray-100">
-      <div className="mx-auto flex max-w-7xl px-5">
+      <div className="mx-auto flex max-w-7xl md:px-5">
         <div
           className={`flex w-full flex-col overflow-hidden ${
             activeJob !== null ? "hidden md:block md:w-[50%]" : "md:w-full"
