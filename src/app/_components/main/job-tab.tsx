@@ -5,19 +5,28 @@ import JobContentCard from "./job-content-card";
 import { useEffect, useRef, useState } from "react";
 import { getGreenhouseJobs } from "~/helper/greenhouseHelper";
 import { api } from "~/trpc/react";
+import JobTabSkeleton from "./skeleton/job-tab-skeleton";
+import JobContentCardSkeleton from "./skeleton/job-content-card-skeleton";
 
 const JobTab = () => {
   const [activeJob, setActiveJob] = useState<string | null>("4063668007");
 
   const ref = useRef<HTMLDivElement>(null);
-  const { data: jobs } = api.job.fetchAllJobs.useQuery();
-  const { data: job } = api.job.fetchJobById.useQuery({ id: activeJob ?? "" });
+  const { data: jobs, isLoading: jobsLoading } =
+    api.job.fetchAllJobs.useQuery();
+  const { data: job, isLoading: jobLoading } = api.job.fetchJobById.useQuery({
+    id: activeJob ?? "",
+  });
   console.log(jobs);
   useEffect(() => {
     if (ref.current) {
       ref.current.scrollIntoView({ behavior: "smooth" });
     }
   }, [activeJob]);
+
+  if (jobsLoading) {
+    return <JobTabSkeleton activeJob={activeJob} />;
+  }
 
   return (
     <div className="w-screen bg-gray-100">
@@ -65,6 +74,13 @@ const JobTab = () => {
                 location={job.location}
                 description={job.description}
               />
+            </div>
+          </div>
+        )}
+        {jobLoading && activeJob !== null && (
+          <div className="w-full md:w-[50%]">
+            <div className="h-[calc(100vh-70px)] w-full overflow-y-scroll">
+              <JobContentCardSkeleton />
             </div>
           </div>
         )}
