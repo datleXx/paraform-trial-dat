@@ -19,7 +19,7 @@ type JobPostFormData = {
 };
 
 const PostForm = () => {
-  const postJob = api.job.createJob.useMutation();
+  //   const postJob = api.job.createJob.useMutation();
   const {
     control,
     setValue,
@@ -52,7 +52,7 @@ const PostForm = () => {
 
   const onSubmit: SubmitHandler<JobPostFormData> = (data) => {
     try {
-      postJob.mutate(data);
+      console.log(data);
     } catch (error) {
       console.log("Error: ", error);
     }
