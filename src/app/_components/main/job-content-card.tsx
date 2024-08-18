@@ -1,11 +1,27 @@
 import { Button, Card } from "@tremor/react";
 import Image from "next/image";
+import { RiArrowGoBackFill } from "@remixicon/react";
 
-const JobContentCard = () => {
+const JobContentCard = ({
+  activeJob,
+  setActiveJob,
+}: {
+  activeJob: number;
+  setActiveJob: (index: number | null) => void;
+}) => {
   return (
     <Card className="!rounded-none">
       <div className="flex flex-col gap-2">
         <div className="flex items-center gap-2">
+          {activeJob !== null && (
+            <div className="mr-3 md:hidden">
+              <RiArrowGoBackFill
+                className="cursor-pointer text-2xl"
+                onClick={() => setActiveJob(null)}
+                size={20}
+              />
+            </div>
+          )}
           <Image
             src="https://media.licdn.com/dms/image/v2/C560BAQGGH7CuU1zQfA/company-logo_100_100/company-logo_100_100/0/1661992454394?e=1732147200&v=beta&t=xiSriyjCXC45Xs7SJIs8dIIVteDzw9OldEIGpujCddA"
             alt="job-content-card"
