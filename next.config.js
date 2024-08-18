@@ -6,6 +6,7 @@ await import("./src/env.js");
 
 /** @type {import("next").NextConfig} */
 const config = {
+  staticPageGenerationTimeout: 2000,
   images: {
     domains: ["media.licdn.com", "lh3.googleusercontent.com"],
   },
