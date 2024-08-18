@@ -141,7 +141,11 @@ const ApplicationForm = ({ id }: { id: string }) => {
                 </h1>
               </div>
             </div>
-            <Button variant="secondary" color="gray">View applications</Button>
+            <Link href={`/jobs/${id}/applications-list`}>
+              <Button variant="secondary" color="gray">
+                View applications
+              </Button>
+            </Link>
           </div>
           <Divider />
           <form onSubmit={handleSubmit(onSubmit)} className="">
