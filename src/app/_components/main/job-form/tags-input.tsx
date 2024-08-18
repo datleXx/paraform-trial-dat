@@ -7,19 +7,19 @@ const TagsInput = () => {
   const tags = [
     {
       id: "2656305916",
-      text: "Sports",
+      text: "Communication",
     },
     {
       id: "233747852",
-      text: "Programming",
+      text: "Leadership",
     },
     {
       id: "3360433541",
-      text: "Travel",
+      text: "Teamwork",
     },
     {
       id: "3169804218",
-      text: "asdfas",
+      text: "MS Office",
     },
   ];
   const [exampleTags, setExampleTags] = useState<Tag[]>(tags);

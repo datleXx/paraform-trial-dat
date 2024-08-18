@@ -2,11 +2,12 @@
 
 import React from "react";
 import { TextInput, Button } from "@tremor/react";
-import { FaLinkedin, FaUserCircle } from "react-icons/fa";
+import { FaUserCircle } from "react-icons/fa";
 import { RiSearchLine } from "@remixicon/react";
 import { RiMapPinLine } from "@remixicon/react";
 import Link from "next/link";
 import Logo from "./logo";
+import { RiMenu3Fill } from "@remixicon/react";
 
 const Header = () => {
   return (
@@ -34,13 +35,16 @@ const Header = () => {
               Search
             </Button>
           </div>
-          <div className="flex items-center justify-center gap-3">
+          <div className="hidden items-center justify-center gap-3 md:flex">
             <Link href="/jobs/post">
               <Button className="bg-blue-600 text-white hover:bg-white hover:text-blue-600">
                 Create Your Job
               </Button>
             </Link>
             <FaUserCircle size={30} color="gray" />
+          </div>
+          <div className="md:hidden">
+            <RiMenu3Fill size={30} color="gray" />
           </div>
         </div>
       </div>
