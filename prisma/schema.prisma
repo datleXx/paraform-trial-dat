@@ -55,16 +55,14 @@ model Session {
 }
 
 model User {
-    id            String        @id @default(cuid())
+    id            String    @id @default(cuid())
     name          String?
-    email         String?       @unique
+    email         String?   @unique
     emailVerified DateTime?
     image         String?
     accounts      Account[]
     sessions      Session[]
     posts         Post[]
-    jobs          Job[]         @relation("RecruiterJob")
-    applications  Application[]
 }
 
 model VerificationToken {
@@ -76,25 +74,93 @@ model VerificationToken {
 }
 
 model Job {
-    id              String        @id @default(cuid())
-    title           String
-    company         String
-    location        String
-    description     String
-    skills          String[]
-    collectionEmail String
-    createdAt       DateTime      @default(now())
-    updatedAt       DateTime      @updatedAt
-    recruiter       User          @relation("RecruiterJob", fields: [recruiterId], references: [id])
-    recruiterId     String
-    applications    Application[]
+    id            String        @id @default(cuid())
+    created_at    DateTime      @default(now())
+    updated_at    DateTime      @updatedAt
+    title         String
+    company       String?
+    location      String
+    description   String
+    skills        String[]
+    questions     Question[]
+    remote_job_id String        @unique
+    Application   Application[]
+}
+
+model Question {
+    id                        String                      @id @default(cuid())
+    created_at                DateTime                    @default(now())
+    updated_at                DateTime                    @updatedAt
+    required                  Boolean?                    @default(false)
+    private                   Boolean?                    @default(false)
+    label                     String
+    name                      String
+    type                      String                      @default("short_text")
+    values                    String[]
+    description               String?
+    job_id                    String
+    job                       Job                         @relation(fields: [job_id], references: [remote_job_id], onDelete: Cascade)
+    ApplicationQuestionAnswer ApplicationQuestionAnswer[]
 }
 
 model Application {
-    id          String   @id @default(cuid())
-    createdAt   DateTime @default(now())
-    applicant   User     @relation(fields: [applicantId], references: [id])
-    applicantId String
-    jobId       String
-    job         Job      @relation(fields: [jobId], references: [id])
+    id         String   @id @default(cuid())
+    created_at DateTime @default(now())
+    updated_at DateTime @updatedAt
+    job_id     String
+    job        Job      @relation(fields: [job_id], references: [remote_job_id], onDelete: Cascade)
+
+    CandidateToApplication    CandidateToApplication[]
+    ApplicationQuestionAnswer ApplicationQuestionAnswer[]
+    Attachment                Attachment[]
+}
+
+model CandidateToApplication {
+    id             String      @id @default(cuid())
+    created_at     DateTime    @default(now())
+    updated_at     DateTime    @updatedAt
+    candidate_id   String
+    application_id String
+    candidate      Candidate   @relation(fields: [candidate_id], references: [id])
+    application    Application @relation(fields: [application_id], references: [id])
+}
+
+model Candidate {
+    id         String   @id @default(cuid())
+    created_at DateTime @default(now())
+    updated_at DateTime @updatedAt
+
+    first_name             String
+    last_name              String
+    email                  String
+    phone                  String
+    address                String?
+    social_media_address   String?
+    company                String                   @default("Lyra Technology")
+    title                  String
+    is_private             Boolean                  @default(false)
+    CandidateToApplication CandidateToApplication[]
+}
+
+model ApplicationQuestionAnswer {
+    id             String      @id @default(cuid())
+    created_at     DateTime    @default(now())
+    updated_at     DateTime    @updatedAt
+    question_id    String
+    question       Question    @relation(fields: [question_id], references: [id], onDelete: Cascade)
+    application_id String
+    application    Application @relation(fields: [application_id], references: [id], onDelete: Cascade)
+    answer         String
+}
+
+model Attachment {
+    id             String      @id @default(cuid())
+    created_at     DateTime    @default(now())
+    updated_at     DateTime    @updatedAt
+    filename       String
+    url            String
+    content        String
+    content_type   String
+    application_id String
+    application    Application @relation(fields: [application_id], references: [id], onDelete: Cascade)
 }

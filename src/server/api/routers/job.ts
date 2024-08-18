@@ -5,26 +5,34 @@ import {
   protectedProcedure,
   publicProcedure,
 } from "~/server/api/trpc";
-import jobPostSchema from "~/app/_components/schema/job-post-schema";
 
 export const jobRouter = createTRPCRouter({
-  createJob: protectedProcedure
-    .input(jobPostSchema)
-    .mutation(async ({ ctx, input }) => {
+  fetchAllJobs: publicProcedure.query(async ({ ctx }) => {
+    try {
+      const jobs = await ctx.db.job.findMany();
+      return jobs;
+    } catch (error) {
+      console.error("Error fetching jobs:", error);
+      return [];
+    }
+  }),
+  fetchJobById: publicProcedure
+    .input(
+      z.object({
+        id: z.string(),
+      }),
+    )
+    .query(async ({ ctx, input }) => {
       try {
-        await ctx.db.job.create({
-          data: {
-            title: input.jobTitle,
-            description: input.jobDescription,
-            location: input.jobLocation,
-            skills: input.skills.map((skill) => skill.text),
-            recruiterId: ctx.session.user.id,
-            company: input.companyName,
-            collectionEmail: input.collectionEmail,
+        const job = await ctx.db.job.findUnique({
+          where: {
+            id: input.id,
           },
         });
-      } catch (e) {
-        console.log(e);
+        return job;
+      } catch (error) {
+        console.error("Error fetching job by id:", error);
+        return null;
       }
     }),
 });

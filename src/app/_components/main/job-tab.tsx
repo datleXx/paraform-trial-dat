@@ -2,14 +2,17 @@
 
 import JobPreviewCard from "./job-preview-card";
 import JobContentCard from "./job-content-card";
-import { Switch } from "@tremor/react";
 import { useEffect, useRef, useState } from "react";
+import { getGreenhouseJobs } from "~/helper/greenhouseHelper";
+import { api } from "~/trpc/react";
 
 const JobTab = () => {
-  const [activeJob, setActiveJob] = useState<number | null>(0);
+  const [activeJob, setActiveJob] = useState<string | null>("4063668007");
 
   const ref = useRef<HTMLDivElement>(null);
-
+  const { data: jobs } = api.job.fetchAllJobs.useQuery();
+  const { data: job } = api.job.fetchJobById.useQuery({ id: activeJob ?? "" });
+  console.log(jobs);
   useEffect(() => {
     if (ref.current) {
       ref.current.scrollIntoView({ behavior: "smooth" });
@@ -26,33 +29,41 @@ const JobTab = () => {
         >
           <div className="flex w-full items-center justify-between bg-black px-2 py-4 text-white">
             <div className="flex flex-col gap-1">
-              <h1 className="text-md font-light">Jobs In Australia</h1>
-              <p className="text-xs font-extralight">137,676 results</p>
+              <h1 className="text-md font-light">Job Posts</h1>
+              <p className="text-xs font-extralight">
+                {jobs?.length ?? 0} results
+              </p>
             </div>
           </div>
 
           <div className="h-[calc(100vh-146px)] w-full overflow-y-scroll">
-            {Array.from({ length: 10 }, (_, index) => (
+            {jobs?.map((job) => (
               <div
-                key={index}
-                onClick={() => setActiveJob(index)}
-                ref={activeJob === index ? ref : null}
+                key={job.id}
+                onClick={() => setActiveJob(job.id)}
+                ref={activeJob === job.id ? ref : null}
               >
                 <JobPreviewCard
-                  isActive={activeJob === index}
-                  onClick={() => setActiveJob(index)}
+                  isActive={activeJob === job.id}
+                  onClick={() => setActiveJob(job.id)}
+                  title={job.title}
+                  company={job.company ?? ""}
+                  location={job.location ?? ""}
                 />
               </div>
             ))}
           </div>
         </div>
-        {activeJob !== null && (
+        {activeJob !== null && job && (
           <div className="w-full md:w-[50%]">
             <div className="h-[calc(100vh-70px)] w-full overflow-y-scroll">
               <JobContentCard
                 totalJobs={10}
                 activeJob={activeJob}
                 setActiveJob={setActiveJob}
+                title={job.title}
+                location={job.location}
+                description={job.description}
               />
             </div>
           </div>
