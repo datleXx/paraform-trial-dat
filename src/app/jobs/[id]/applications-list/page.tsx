@@ -15,6 +15,7 @@ import {
 } from "@tremor/react";
 import ApplicationListSkeleton from "~/app/_components/main/application/skeleton/application-list-skeleton";
 import { api } from "~/trpc/react";
+import { formatDistanceToNow } from "date-fns";
 
 interface Props {
   params: {
@@ -76,6 +77,9 @@ const ApplicationsList = ({ params }: Props) => {
             <TableCell className="whitespace-normal font-semibold text-black">
               Social Media Address
             </TableCell>
+            <TableCell className="whitespace-normal font-semibold text-black">
+              Published at
+            </TableCell>
           </TableRow>
         </TableHead>
         {isLoading ? (
@@ -83,33 +87,37 @@ const ApplicationsList = ({ params }: Props) => {
         ) : (
           <TableBody className="max-h-[calc(100vh-200px)] w-full">
             {candidates.map((candidate) => (
-              <TableRow key={candidate.id}>
-                <TableCell className="whitespace-normal font-medium">
-                  {candidate.id}
-                </TableCell>
-                <TableCell className="whitespace-normal">
+              <TableRow
+                key={candidate.id}
+                className="cursor-pointer hover:bg-gray-100"
+              >
+                <TableCell className="font-medium">{candidate.id}</TableCell>
+                <TableCell className="font-medium">
                   {candidate.first_name}
                 </TableCell>
-                <TableCell className="whitespace-normal">
+                <TableCell className="font-medium">
                   {candidate.last_name}
                 </TableCell>
-                <TableCell className="whitespace-normal">
-                  {candidate.email}
+                <TableCell className="font-medium">{candidate.email}</TableCell>
+                <TableCell className="font-medium">
+                  {candidate.phone !== "" ? candidate.phone : "N/A"}
                 </TableCell>
-                <TableCell className="whitespace-normal">
-                  {candidate.phone}
+                <TableCell className="font-medium">
+                  {candidate.address ?? "N/A"}
                 </TableCell>
-                <TableCell className="whitespace-normal">
-                  {candidate.address}
-                </TableCell>
-                <TableCell className="whitespace-normal">
+                <TableCell className="font-medium">
                   {candidate.company}
                 </TableCell>
-                <TableCell className="whitespace-normal">
-                  {candidate.title}
+                <TableCell className="font-medium">{candidate.title}</TableCell>
+                <TableCell className="font-medium">
+                  {candidate.social_media_address !== ""
+                    ? candidate.social_media_address
+                    : "N/A"}
                 </TableCell>
-                <TableCell className="whitespace-normal">
-                  {candidate.social_media_address}
+                <TableCell className="font-medium">
+                  {formatDistanceToNow(candidate.created_at, {
+                    addSuffix: true,
+                  })}
                 </TableCell>
               </TableRow>
             ))}
