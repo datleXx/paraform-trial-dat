@@ -197,7 +197,7 @@ const ApplicationForm = ({ id }: { id: string }) => {
     <ApplicationFormSkeleton />
   ) : (
     <div className="w-screen bg-gray-100">
-      <div className="mx-auto flex max-w-7xl px-5">
+      <div className="mx-auto flex max-w-2xl px-5 xl:max-w-3xl">
         <Card className="mx-auto my-5">
           <div className="flex items-center justify-between">
             <div className="flex flex-col gap-2">
@@ -314,7 +314,7 @@ const ApplicationForm = ({ id }: { id: string }) => {
                   </>
                 ) : null}
                 {errors[question.name] && (
-                  <p className="text-red-500">
+                  <p className="text-xs text-red-500">
                     {String(errors[question.name]?.message)}
                   </p>
                 )}
@@ -323,11 +323,20 @@ const ApplicationForm = ({ id }: { id: string }) => {
 
             <div className="my-7 flex items-center justify-end gap-2">
               <Link href="/">
-                <Button variant="secondary" color="gray">
-                  Cancel
+                <Button
+                  variant="secondary"
+                  color="gray"
+                  className="!rounded-full !px-2 !py-1"
+                >
+                  <p className="text-sm">Cancel</p>
                 </Button>
               </Link>
-              <Button onClick={handlePreviewButton}>Preview</Button>
+              <Button
+                className="!rounded-full !px-2 !py-1"
+                onClick={handlePreviewButton}
+              >
+                <p className="text-sm">Preview</p>
+              </Button>
             </div>
             {preview && (
               <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-80">
@@ -341,8 +350,12 @@ const ApplicationForm = ({ id }: { id: string }) => {
                   <Divider />
                   {renderPreview()}
                   <div className="flex items-center justify-end">
-                    <Button type="submit" onClick={() => setPreview(false)}>
-                      Apply
+                    <Button
+                      className="!rounded-full !px-2 !py-1"
+                      type="submit"
+                      onClick={() => setPreview(false)}
+                    >
+                      <p className="text-sm">Apply</p>
                     </Button>
                   </div>
                 </Card>

@@ -23,6 +23,7 @@ import {
 } from "~/helper/applicationformHelper";
 import { useState } from "react";
 import Link from "next/link";
+import { AttachmentsIcon, SyncIcon } from "~/app/_components/icons";
 
 interface Props {
   params: {
@@ -58,6 +59,12 @@ const ApplicationsList = ({ params }: Props) => {
     }
   };
 
+  const candidates = applications?.map((application) => ({
+    candidate: application.CandidateToApplication[0]?.candidate,
+    attachments: application.Attachment,
+    createdAt: application.created_at,
+  }));
+
   const [sync, setSync] = useState(false);
 
   return (
@@ -76,8 +83,8 @@ const ApplicationsList = ({ params }: Props) => {
       <div className="flex items-center justify-end">
         <Button
           onClick={handleSyncClick}
-          icon={RiLoopLeftLine}
-          className="!rounded-full !p-2 !text-xs"
+          icon={SyncIcon}
+          className="!rounded-full !px-[5px] !py-[2px] !text-xs"
           loading={sync}
         >
           Sync
@@ -92,16 +99,18 @@ const ApplicationsList = ({ params }: Props) => {
         <Table className="scrollbar-hide h-[calc(100vh-200px)] w-full overflow-y-scroll">
           <TableHead>
             <TableRow>
-              <TableCell className="whitespace-normal font-semibold text-black">
-                ID
+              <TableCell className="font-semibold text-black">
+                First name
               </TableCell>
-              <TableCell className="whitespace-normal font-semibold text-black">
-                Candidate ID
+              <TableCell className="font-semibold text-black">
+                Last name
               </TableCell>
-              <TableCell className="whitespace-normal font-semibold text-black">
+              <TableCell className="font-semibold text-black">Email</TableCell>
+              <TableCell className="font-semibold text-black">Phone</TableCell>
+              <TableCell className="font-semibold text-black">
                 Attachments
               </TableCell>
-              <TableCell className="whitespace-normal font-semibold text-black">
+              <TableCell className="font-semibold text-black">
                 Published at
               </TableCell>
             </TableRow>
@@ -110,36 +119,41 @@ const ApplicationsList = ({ params }: Props) => {
             <ApplicationListSkeleton />
           ) : (
             <TableBody className="max-h-[calc(100vh-200px)] w-full">
-              {applications?.map((application) => (
+              {candidates?.map((candidate) => (
                 <TableRow
-                  key={application.id}
+                  key={candidate.candidate?.id}
                   className="cursor-pointer hover:bg-gray-100"
                 >
                   <TableCell className="font-medium">
-                    {application.id}
+                    {candidate.candidate?.first_name}
                   </TableCell>
                   <TableCell className="font-medium">
-                    {application.CandidateToApplication[0]?.id}
+                    {candidate.candidate?.last_name}
+                  </TableCell>
+                  <TableCell className="font-medium">
+                    {candidate.candidate?.email}
+                  </TableCell>
+                  <TableCell className="font-medium">
+                    {candidate.candidate?.phone}
                   </TableCell>
                   <TableCell className="flex items-center gap-2">
-                    {application.Attachment.map((attachment) => (
+                    {candidate.attachments.map((attachment) => (
                       <Link
                         key={attachment.id}
                         href={attachment.url}
                         target="_blank"
                       >
                         <Button
-                          className="!rounded-full !p-2 !text-xs"
-                          icon={RiLink}
+                          className="!rounded-full !px-[4px] !py-[1px] !text-xs"
+                          icon={AttachmentsIcon}
                         >
-                          {truncateFilename(attachment.filename, 5)}
+                          {truncateFilename(attachment.filename, 20)}
                         </Button>
                       </Link>
                     ))}
                   </TableCell>
-
                   <TableCell className="font-medium">
-                    {formatDistanceToNow(application.created_at, {
+                    {formatDistanceToNow(candidate.createdAt, {
                       addSuffix: true,
                     })}
                   </TableCell>

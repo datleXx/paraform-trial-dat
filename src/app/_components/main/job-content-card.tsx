@@ -41,36 +41,30 @@ const JobContentCard = ({
           )}
         </div>
         <div className="mt-4 md:mt-0">
-          <div className="flex items-center gap-1.5">
-            <Logo size={20} />
-            <h1 className="text-base font-semibold leading-none transition-all hover:underline">
-              Paraform
-            </h1>
-          </div>
-          <div className="flex items-center justify-start gap-2">
-            <h1 className="cursor-pointer text-2xl font-medium transition-all hover:underline">
+          <div className="flex flex-col gap-1">
+            <div className="flex items-center gap-1.5">
+              <Logo size={20} />
+              <h1 className="text-base font-semibold leading-none transition-all hover:cursor-pointer">
+                Paraform
+              </h1>
+            </div>
+            <h1 className="cursor-pointer text-2xl font-medium transition-all">
               {title}
             </h1>
-            <button className="rounded-full p-2 text-gray-500 transition-all hover:bg-gray-100 hover:text-red-600">
-              <RiHeartLine className="h-6 w-6" />
-            </button>
-            <div className="ml-auto flex items-center gap-2">
-              <Link href={`/jobs/${activeJob}/application`}>
-                <Button className="!rounded-full hover:bg-blue-600">
-                  Apply
-                </Button>
-              </Link>
-              <Link href={`/jobs/${activeJob}/applications-list`}>
-                <Button
-                  variant="secondary"
-                  className="!rounded-full"
-                >
-                  View Applications
-                </Button>
-              </Link>
-            </div>
+            <p className="text-sm font-light text-gray-500">{location}</p>
           </div>
-          <p className="text-sm font-light text-gray-500">{location}</p>
+          <div className="my-5 flex items-center gap-2">
+            <Link href={`/jobs/${activeJob}/application`}>
+              <Button className="!rounded-full !px-2 !py-1 hover:bg-blue-600">
+                <p className="text-sm">Apply</p>
+              </Button>
+            </Link>
+            <Link href={`/jobs/${activeJob}/applications-list`}>
+              <Button variant="secondary" className="!rounded-full !px-2 !py-1">
+                <p className="text-sm">View Applications</p>
+              </Button>
+            </Link>
+          </div>
         </div>
         <div className="mt-4 space-y-4">
           <div>

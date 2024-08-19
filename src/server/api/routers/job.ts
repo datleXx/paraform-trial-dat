@@ -51,7 +51,11 @@ export const jobRouter = createTRPCRouter({
         const applications = await ctx.db.application.findMany({
           where: { job_id: input.remote_id },
           include: {
-            CandidateToApplication: true,
+            CandidateToApplication: {
+              include: {
+                candidate: true,
+              },
+            },
             Attachment: true,
           },
         });
