@@ -52,7 +52,7 @@ const ApplicationsList = ({ params }: Props) => {
       setSync(true);
       await syncApplication(params.id);
       setSync(false);
-      refetch();
+      await refetchApplications();
     } catch (error) {
       console.log(error);
     }
@@ -123,7 +123,11 @@ const ApplicationsList = ({ params }: Props) => {
                   </TableCell>
                   <TableCell className="flex items-center gap-2">
                     {application.Attachment.map((attachment) => (
-                      <Link href={attachment.url} target="_blank">
+                      <Link
+                        key={attachment.id}
+                        href={attachment.url}
+                        target="_blank"
+                      >
                         <Button
                           className="!rounded-full !p-2 !text-xs"
                           icon={RiLink}

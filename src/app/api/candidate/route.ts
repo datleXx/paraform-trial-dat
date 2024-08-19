@@ -4,7 +4,7 @@ import {
   postAttachments,
   CandidateProps,
   ApplicationProps,
-  AttachmentProps
+  AttachmentProps,
 } from "~/helper/greenhouseHelper";
 
 export async function POST(request: Request) {
@@ -18,28 +18,23 @@ export async function POST(request: Request) {
     // Post candidate
     const candidateResponse = await postCandidate(candidate);
     console.log("Candidate Response: ", candidateResponse.applications[0].jobs);
-    const attachmentResponse: any[] = [];
     if (candidateResponse) {
       // Post application
       const application = JSON.parse(
         data.get("application") as string,
       ) as ApplicationProps;
       console.log("Application: ", application);
-      const attachments = application.attachments;
-      attachments.map(async (attachment) => {
-        const response = await postAttachments(
-          candidateResponse.applications[0].id,
-          attachment,
-        );
-        console.log("Attachment Response: ", response);
-        attachmentResponse.push(response);
-      });
+      const attachmentPromises = application.attachments.map((attachment) =>
+        postAttachments(candidateResponse.applications[0].id, attachment),
+      );
 
-      if (attachmentResponse) {
+      const attachmentResponses = await Promise.all(attachmentPromises);
+
+      if (attachmentResponses) {
         return NextResponse.json({
           success: true,
           candidate: candidateResponse,
-          attachments: attachmentResponse,
+          attachments: attachmentResponses,
         });
       }
     }
