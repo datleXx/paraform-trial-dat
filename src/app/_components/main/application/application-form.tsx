@@ -189,10 +189,10 @@ const ApplicationForm = ({ id }: { id: string }) => {
     }
   };
 
-  const handleApplyButton = (e: React.MouseEvent<HTMLButtonElement>) => {
+  const handleApplyButton = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     setPreview(false);
-    handleSubmit(onSubmit)();
+    await handleSubmit(onSubmit)();
   };
 
   const handlePreviewButton = (e: React.MouseEvent<HTMLButtonElement>) => {
