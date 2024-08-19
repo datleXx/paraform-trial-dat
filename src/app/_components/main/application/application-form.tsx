@@ -1,3 +1,5 @@
+"use client";
+
 import { Button, Card, Divider, TextInput, Textarea } from "@tremor/react";
 import Link from "next/link";
 import { zodResolver } from "@hookform/resolvers/zod";
