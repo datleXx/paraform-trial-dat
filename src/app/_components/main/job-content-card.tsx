@@ -56,8 +56,16 @@ const JobContentCard = ({
             </button>
             <div className="ml-auto flex items-center gap-2">
               <Link href={`/jobs/${activeJob}/application`}>
-                <Button className="rounded-full hover:bg-blue-600">
+                <Button className="!rounded-full hover:bg-blue-600">
                   Apply
+                </Button>
+              </Link>
+              <Link href={`/jobs/${activeJob}/applications-list`}>
+                <Button
+                  variant="secondary"
+                  className="!rounded-full"
+                >
+                  View Applications
                 </Button>
               </Link>
             </div>
