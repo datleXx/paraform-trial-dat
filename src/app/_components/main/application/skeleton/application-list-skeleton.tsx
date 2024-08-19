@@ -18,21 +18,6 @@ const ApplicationListSkeleton = () => {
           <TableCell>
             <Skeleton variant="text" width={100} height={20} />
           </TableCell>
-          <TableCell>
-            <Skeleton variant="text" width={100} height={20} />
-          </TableCell>
-          <TableCell>
-            <Skeleton variant="text" width={100} height={20} />
-          </TableCell>
-          <TableCell>
-            <Skeleton variant="text" width={100} height={20} />
-          </TableCell>
-          <TableCell>
-            <Skeleton variant="text" width={100} height={20} />
-          </TableCell>
-          <TableCell>
-            <Skeleton variant="text" width={100} height={20} />
-          </TableCell>
         </TableRow>
       ))}
     </TableBody>

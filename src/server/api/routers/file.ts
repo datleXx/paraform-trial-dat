@@ -20,10 +20,10 @@ export const fileRouter = createTRPCRouter({
     .mutation(async ({ input }) => {
       try {
         const { fileName, fileType, fileBase64 } = input;
-        const key = `uploads/${Date.now()}-${fileName}`;
+        const key = `uploads/${fileType}/${Date.now()}-${fileName}`;
         const fileBuffer = Buffer.from(fileBase64, "base64");
         const result = await uploadObject(key, fileBuffer, fileType);
-        return result;
+        return { ...result, fileType };
       } catch (error) {
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
@@ -48,7 +48,7 @@ export const fileRouter = createTRPCRouter({
 
   getPresignedUrl: publicProcedure
     .input(z.object({ key: z.string() }))
-    .query(async ({ input }) => {
+    .mutation(async ({ input }) => {
       try {
         const url = await createPresignedUrl(input.key);
         return { url };

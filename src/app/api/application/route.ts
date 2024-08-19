@@ -6,12 +6,12 @@ import {
   getGreenhouseJobs,
 } from "~/helper/greenhouseHelper";
 import { db } from "~/server/db";
-export async function GET() {
+export async function POST(req: Request) {
   try {
-    const application = await getApplicationsByJobId("4063671007");
-    console.log("Application length:", application.length);
+    // const application = await postApplication("31095551007", "4063668007", []);
+    // console.log("Application length:", application.length);
 
-    return NextResponse.json({ application });
+    return NextResponse.json({ success: true });
   } catch (error) {
     console.error("Error fetching applications from Greenhouse:", error);
     return NextResponse.json({

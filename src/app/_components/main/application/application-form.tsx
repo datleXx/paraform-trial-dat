@@ -10,12 +10,9 @@ import { z } from "zod";
 import { RiLink } from "@remixicon/react";
 import { RiCloseLine } from "@remixicon/react";
 import { readFile } from "~/helper/s3-Helper";
-import {
-  CandidateProps,
-  postCandidate,
-  postApplication,
-} from "~/helper/greenhouseHelper";
+import { AttachmentProps } from "~/helper/greenhouseHelper";
 import ApplicationFormSkeleton from "./skeleton/application-form-skeleton";
+import { useRouter } from "next/navigation";
 const ApplicationForm = ({ id }: { id: string }) => {
   const { data: job, isLoading } = api.job.fetchJobById.useQuery({ id });
 
@@ -27,9 +24,11 @@ const ApplicationForm = ({ id }: { id: string }) => {
     setValue,
     register,
     handleSubmit,
+    getValues,
     formState: { errors },
   } = useForm<z.infer<typeof schema>>({
     resolver: schema ? zodResolver(schema) : undefined,
+    mode: "onSubmit",
   });
 
   const [resumeUrl, setResumeUrl] = useState<string | null>(null);
@@ -38,36 +37,103 @@ const ApplicationForm = ({ id }: { id: string }) => {
   const [coverLetterFileName, setCoverLetterFileName] = useState<string | null>(
     null,
   );
+  const [preview, setPreview] = useState(false);
   const fileUploader = api.file.uploadFile.useMutation();
+  const urlResolver = api.file.getPresignedUrl.useMutation();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const router = useRouter();
+
+  const renderPreview = () => {
+    const values = getValues();
+    return (
+      <div className="flex flex-col gap-2">
+        {Object.entries(values).map(([key, value]) => (
+          <div className="my-5 flex flex-col gap-2" key={key}>
+            <h3 className="font-semibold capitalize">
+              {key.replace("_", " ")}
+            </h3>
+            {value instanceof File ? (
+              <p>{value.name}</p>
+            ) : (
+              <p>{value as string}</p>
+            )}
+          </div>
+        ))}
+      </div>
+    );
+  };
 
   const onSubmit: SubmitHandler<z.infer<typeof schema>> = async (data) => {
     try {
+      const attachments: AttachmentProps[] = [];
       const candidateData = {
-        first_name: data.first_name,
-        last_name: data.last_name,
-        email: data.email,
-        phone: data.phone,
-        website_url: data.website ?? "",
-        social_media_url: data.linkedin_profile ?? "",
+        first_name: data.first_name ?? "N/A",
+        last_name: data.last_name ?? "N/A",
+        email: data.email ?? "N/A",
+        phone: data.phone ?? "N/A",
+        website_url: data.website ?? "N/A",
+        social_media_url: data.linkedin_profile ?? "N/A",
+        address: data.address ?? "N/A",
+        title: data.title ?? "N/A",
+        company: data.company ?? "N/A",
+        application: job?.id ?? "",
       };
 
+      if (data.resume instanceof File) {
+        const resume_blob = (await readFile(data.resume)) as string;
+        const resume_base64 = btoa(resume_blob);
+        const { success, key, fileType } = await fileUploader.mutateAsync({
+          fileName: data.resume.name,
+          fileType: "resume",
+          fileBase64: resume_base64,
+        });
+
+        console.log("success:", key);
+
+        const { url: resumeUrl } = await urlResolver.mutateAsync({
+          key,
+        });
+        console.log("resumeUrl:", resumeUrl);
+        if (resumeUrl) {
+          attachments.push({
+            url: resumeUrl,
+            name: data.resume.name,
+            type: "resume",
+            content_type: "application/pdf",
+          });
+        }
+      }
+
+      if (data.cover_letter instanceof File) {
+        const coverLetter_blob = (await readFile(data.cover_letter)) as string;
+        const coverLetter_base64 = btoa(coverLetter_blob);
+        const { success, key, fileType } = await fileUploader.mutateAsync({
+          fileName: data.cover_letter.name,
+          fileType: "cover_letter",
+          fileBase64: coverLetter_base64,
+        });
+
+        const { url: coverLetterUrl } = await urlResolver.mutateAsync({
+          key,
+        });
+        if (coverLetterUrl) {
+          attachments.push({
+            url: coverLetterUrl,
+            name: data.cover_letter.name,
+            type: "cover_letter",
+            content_type: "application/pdf",
+          });
+        }
+      }
+
       const applicationData = {
-        custom_fields: {
-          // Add any custom fields here
-        },
-        question_answers: job?.questions.map((question) => ({
-          question_id: question.id,
-          answer: data[question.label.toLowerCase().replace(" ", "_")],
-        })),
+        job_id: job?.id ?? "",
+        attachments,
       };
 
       const formData = new FormData();
       formData.append("candidate", JSON.stringify(candidateData));
       formData.append("application", JSON.stringify(applicationData));
-      formData.append("jobId", job?.remote_job_id ?? "");
-      if (data.resume instanceof File) formData.append("resume", data.resume);
-      if (data.cover_letter instanceof File)
-        formData.append("cover_letter", data.cover_letter);
 
       const response = await fetch("/api/candidate", {
         method: "POST",
@@ -78,12 +144,11 @@ const ApplicationForm = ({ id }: { id: string }) => {
         throw new Error("Failed to submit application");
       }
 
+      setIsSubmitting(false);
+      router.push(`/jobs/${id}/applications-list`);
       const result = await response.json();
-      console.log("Application submitted:", result);
-      // Handle successful submission (e.g., show success message, redirect)
     } catch (error) {
       console.error("Error submitting application:", error);
-      // Handle error (e.g., show error message)
     }
   };
 
@@ -120,9 +185,13 @@ const ApplicationForm = ({ id }: { id: string }) => {
     }
   };
 
-  if (isLoading) return <ApplicationFormSkeleton />;
+  const handlePreviewButton = () => {
+    setPreview(true);
+  };
 
-  return (
+  return isLoading || isSubmitting ? (
+    <ApplicationFormSkeleton />
+  ) : (
     <div className="w-screen bg-gray-100">
       <div className="mx-auto flex max-w-7xl px-5">
         <Card className="mx-auto my-5">
@@ -140,15 +209,10 @@ const ApplicationForm = ({ id }: { id: string }) => {
                 </h1>
               </div>
             </div>
-            <Link href={`/jobs/${id}/applications-list`}>
-              <Button variant="secondary" color="gray">
-                View applications
-              </Button>
-            </Link>
           </div>
           <Divider />
           <form onSubmit={handleSubmit(onSubmit)} className="">
-            {job?.questions.map((question) => (
+            {job?.questions?.map((question) => (
               <div
                 className="my-7 flex w-full flex-col items-start gap-2"
                 key={question.name}
@@ -259,8 +323,27 @@ const ApplicationForm = ({ id }: { id: string }) => {
                   Cancel
                 </Button>
               </Link>
-              <Button type="submit">Apply</Button>
+              <Button onClick={handlePreviewButton}>Preview</Button>
             </div>
+            {preview && (
+              <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-80">
+                <Card className="w-full max-w-2xl">
+                  <div className="flex items-center justify-between gap-2">
+                    <h1 className="text-2xl font-medium">
+                      Application Preview
+                    </h1>
+                    <RiCloseLine onClick={() => setPreview(false)} />
+                  </div>
+                  <Divider />
+                  {renderPreview()}
+                  <div className="flex items-center justify-end">
+                    <Button type="submit" onClick={() => setPreview(false)}>
+                      Apply
+                    </Button>
+                  </div>
+                </Card>
+              </div>
+            )}
           </form>
         </Card>
       </div>

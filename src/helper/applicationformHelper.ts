@@ -34,3 +34,18 @@ export const generateApplicationFormSchema = (questions: Question[]) => {
 
   return z.object(schemaShape);
 };
+
+export const syncApplication = async (jobId: string) => {
+  try {
+    await fetch(`/api/application-by-job?jobId=${jobId}`);
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export function truncateFilename(filename: string, maxLength: number): string {
+  if (filename.length <= maxLength) return filename;
+  const extension = filename.split(".").pop();
+  const name = filename.substring(0, maxLength - 4);
+  return `${name}...${extension}`;
+}

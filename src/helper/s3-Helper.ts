@@ -56,15 +56,21 @@ export async function deleteObject(key: string) {
 }
 
 export async function createPresignedUrl(key: string) {
-  const expiryMinutes = 15;
-  const input = {
-    Bucket: bucketName,
-    Key: key,
-  };
-  const command = new GetObjectCommand(input);
-  return await getSignedUrl(s3Client, command, {
-    expiresIn: 60 * expiryMinutes,
-  });
+  try {
+    const expiryMinutes = 60 * 24 * 6; // 6 days
+    const input = {
+      Bucket: bucketName,
+      Key: key,
+    };
+    const command = new GetObjectCommand(input);
+    const url = await getSignedUrl(s3Client, command, {
+      expiresIn: 60 * expiryMinutes,
+    });
+    return url;
+  } catch (e) {
+    console.error(e);
+    throw new Error("Failed to create presigned url");
+  }
 }
 
 export async function readFile(file: File) {

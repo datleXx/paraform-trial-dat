@@ -30,21 +30,34 @@ export const jobRouter = createTRPCRouter({
           },
           include: {
             questions: true,
-            Application: {
-              include: {
-                CandidateToApplication: {
-                  include: {
-                    candidate: true,
-                  },
-                },
-              },
-            },
           },
         });
         return job;
       } catch (error) {
         console.error("Error fetching job by id:", error);
         return null;
+      }
+    }),
+
+  fetchApplicationsByJob: publicProcedure
+    .input(
+      z.object({
+        remote_id: z.string(),
+      }),
+    )
+    .query(async ({ ctx, input }) => {
+      try {
+        const applications = await ctx.db.application.findMany({
+          where: { job_id: input.remote_id },
+          include: {
+            CandidateToApplication: true,
+            Attachment: true,
+          },
+        });
+        return applications;
+      } catch (error) {
+        console.error("Error fetching applications by job:", error);
+        return [];
       }
     }),
 });

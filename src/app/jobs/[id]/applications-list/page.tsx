@@ -16,6 +16,13 @@ import {
 import ApplicationListSkeleton from "~/app/_components/main/application/skeleton/application-list-skeleton";
 import { api } from "~/trpc/react";
 import { formatDistanceToNow } from "date-fns";
+import { RiFileTextFill, RiLink, RiLoopLeftLine } from "@remixicon/react";
+import {
+  syncApplication,
+  truncateFilename,
+} from "~/helper/applicationformHelper";
+import { useState } from "react";
+import Link from "next/link";
 
 interface Props {
   params: {
@@ -24,14 +31,34 @@ interface Props {
 }
 
 const ApplicationsList = ({ params }: Props) => {
-  const { data: job, isLoading } = api.job.fetchJobById.useQuery({
+  const {
+    data: job,
+    isLoading,
+    refetch,
+  } = api.job.fetchJobById.useQuery({
     id: params.id,
   });
 
-  const candidates =
-    job?.Application?.flatMap((app) =>
-      app.CandidateToApplication.map((cta) => cta.candidate),
-    ) ?? [];
+  const {
+    data: applications,
+    isLoading: isApplicationsLoading,
+    refetch: refetchApplications,
+  } = api.job.fetchApplicationsByJob.useQuery({
+    remote_id: job?.remote_job_id ?? "",
+  });
+
+  const handleSyncClick = async () => {
+    try {
+      setSync(true);
+      await syncApplication(params.id);
+      setSync(false);
+      refetch();
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const [sync, setSync] = useState(false);
 
   return (
     <Card className="mx-auto h-full max-w-7xl !rounded-none">
@@ -46,84 +73,78 @@ const ApplicationsList = ({ params }: Props) => {
           )}
         </Text>
       </div>
+      <div className="flex items-center justify-end">
+        <Button
+          onClick={handleSyncClick}
+          icon={RiLoopLeftLine}
+          className="!rounded-full !p-2 !text-xs"
+          loading={sync}
+        >
+          Sync
+        </Button>
+      </div>
       <Divider />
-      <Table className="scrollbar-hide h-[calc(100vh-200px)] w-full overflow-y-scroll">
-        <TableHead>
-          <TableRow>
-            <TableCell className="whitespace-normal font-semibold text-black">
-              ID
-            </TableCell>
-            <TableCell className="whitespace-normal font-semibold text-black">
-              First Name
-            </TableCell>
-            <TableCell className="whitespace-normal font-semibold text-black">
-              Last Name
-            </TableCell>
-            <TableCell className="whitespace-normal font-semibold text-black">
-              Email
-            </TableCell>
-            <TableCell className="whitespace-normal font-semibold text-black">
-              Phone
-            </TableCell>
-            <TableCell className="whitespace-normal font-semibold text-black">
-              Address
-            </TableCell>
-            <TableCell className="whitespace-normal font-semibold text-black">
-              Company
-            </TableCell>
-            <TableCell className="whitespace-normal font-semibold text-black">
-              Title
-            </TableCell>
-            <TableCell className="whitespace-normal font-semibold text-black">
-              Social Media Address
-            </TableCell>
-            <TableCell className="whitespace-normal font-semibold text-black">
-              Published at
-            </TableCell>
-          </TableRow>
-        </TableHead>
-        {isLoading ? (
-          <ApplicationListSkeleton />
-        ) : (
-          <TableBody className="max-h-[calc(100vh-200px)] w-full">
-            {candidates.map((candidate) => (
-              <TableRow
-                key={candidate.id}
-                className="cursor-pointer hover:bg-gray-100"
-              >
-                <TableCell className="font-medium">{candidate.id}</TableCell>
-                <TableCell className="font-medium">
-                  {candidate.first_name}
-                </TableCell>
-                <TableCell className="font-medium">
-                  {candidate.last_name}
-                </TableCell>
-                <TableCell className="font-medium">{candidate.email}</TableCell>
-                <TableCell className="font-medium">
-                  {candidate.phone !== "" ? candidate.phone : "N/A"}
-                </TableCell>
-                <TableCell className="font-medium">
-                  {candidate.address ?? "N/A"}
-                </TableCell>
-                <TableCell className="font-medium">
-                  {candidate.company}
-                </TableCell>
-                <TableCell className="font-medium">{candidate.title}</TableCell>
-                <TableCell className="font-medium">
-                  {candidate.social_media_address !== ""
-                    ? candidate.social_media_address
-                    : "N/A"}
-                </TableCell>
-                <TableCell className="font-medium">
-                  {formatDistanceToNow(candidate.created_at, {
-                    addSuffix: true,
-                  })}
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        )}
-      </Table>
+      {applications?.length === 0 && !sync ? (
+        <div className="h-[calc(100vh-200px)]">
+          <Text>No applications yet</Text>
+        </div>
+      ) : (
+        <Table className="scrollbar-hide h-[calc(100vh-200px)] w-full overflow-y-scroll">
+          <TableHead>
+            <TableRow>
+              <TableCell className="whitespace-normal font-semibold text-black">
+                ID
+              </TableCell>
+              <TableCell className="whitespace-normal font-semibold text-black">
+                Candidate ID
+              </TableCell>
+              <TableCell className="whitespace-normal font-semibold text-black">
+                Attachments
+              </TableCell>
+              <TableCell className="whitespace-normal font-semibold text-black">
+                Published at
+              </TableCell>
+            </TableRow>
+          </TableHead>
+          {isLoading || sync ? (
+            <ApplicationListSkeleton />
+          ) : (
+            <TableBody className="max-h-[calc(100vh-200px)] w-full">
+              {applications?.map((application) => (
+                <TableRow
+                  key={application.id}
+                  className="cursor-pointer hover:bg-gray-100"
+                >
+                  <TableCell className="font-medium">
+                    {application.id}
+                  </TableCell>
+                  <TableCell className="font-medium">
+                    {application.CandidateToApplication[0]?.id}
+                  </TableCell>
+                  <TableCell className="flex items-center gap-2">
+                    {application.Attachment.map((attachment) => (
+                      <Link href={attachment.url} target="_blank">
+                        <Button
+                          className="!rounded-full !p-2 !text-xs"
+                          icon={RiLink}
+                        >
+                          {truncateFilename(attachment.filename, 5)}
+                        </Button>
+                      </Link>
+                    ))}
+                  </TableCell>
+
+                  <TableCell className="font-medium">
+                    {formatDistanceToNow(application.created_at, {
+                      addSuffix: true,
+                    })}
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          )}
+        </Table>
+      )}
     </Card>
   );
 };
