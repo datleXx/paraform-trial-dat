@@ -5,7 +5,7 @@ import Logo from "~/app/_components/home/logo";
 const ApplicationFormSkeleton = () => {
   return (
     <div className="w-screen bg-gray-100">
-      <div className="mx-auto flex max-w-7xl px-5">
+      <div className="mx-auto flex max-w-2xl px-5 xl:max-w-3xl">
         <Card className="mx-auto my-5">
           <div className="flex items-center justify-between">
             <div className="flex flex-col gap-2">
@@ -40,10 +40,18 @@ const ApplicationFormSkeleton = () => {
             ))}
 
             <div className="my-7 flex items-center justify-end gap-2">
-              <Button variant="secondary" color="gray">
+              <Button
+                variant="secondary"
+                color="gray"
+                className="!rounded-full !px-2 !py-1"
+              >
                 <Skeleton width={100} height={20} />
               </Button>
-              <Button>
+              <Button
+                variant="secondary"
+                color="gray"
+                className="!rounded-full !px-2 !py-1"
+              >
                 <Skeleton width={100} height={20} />
               </Button>
             </div>

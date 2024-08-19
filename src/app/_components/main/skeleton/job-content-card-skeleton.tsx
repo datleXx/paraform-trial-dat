@@ -5,30 +5,30 @@ const JobContentCardSkeleton = () => {
   return (
     <Card className="h-full !rounded-none">
       <div className="flex flex-col gap-2">
-        <div className="flex items-center gap-2">
-          <Skeleton variant="rectangular" width={20} height={20} />
-
-          <h1 className="text-sm font-semibold transition-all hover:underline">
-            <Skeleton variant="text" width={200} height={20} />
-          </h1>
-        </div>
-        <div>
-          <div className="flex items-center justify-start gap-2">
-            <h1 className="cursor-pointer text-2xl font-medium transition-all hover:underline">
+        <div className="flex flex-col gap-2">
+          <div className="flex items-center gap-2">
+            <Skeleton variant="rectangular" width={20} height={20} />
+            <h1 className="text-sm font-semibold">
               <Skeleton variant="text" width={200} height={20} />
             </h1>
-            <button className="rounded-full p-2 text-gray-500 transition-all hover:bg-gray-100 hover:text-red-600">
-              <Skeleton variant="rectangular" width={20} height={20} />
-            </button>
-            <div className="ml-auto flex items-center gap-2">
-              <Button className="rounded-full hover:bg-blue-600">
-                <Skeleton variant="text" width={50} height={20} />
-              </Button>
-            </div>
           </div>
+          <h1 className="cursor-pointer text-2xl font-medium transition-all">
+            <Skeleton variant="text" width={200} height={20} />
+          </h1>
           <p className="text-sm font-light text-gray-500">
             <Skeleton variant="text" width={200} height={20} />
           </p>
+        </div>
+        <div className="my-5 flex items-center gap-2">
+          <Button className="!rounded-full !px-2 !py-1 hover:bg-blue-600">
+            <Skeleton variant="text" width={50} height={20} />
+          </Button>
+          <Button
+            variant="secondary"
+            className="!rounded-full !px-2 !py-1 hover:bg-blue-600"
+          >
+            <Skeleton variant="text" width={50} height={20} />
+          </Button>
         </div>
         <div className="mt-4 space-y-4">
           <div>
