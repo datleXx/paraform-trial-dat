@@ -67,6 +67,7 @@ const ApplicationForm = ({ id }: { id: string }) => {
 
   const onSubmit: SubmitHandler<z.infer<typeof schema>> = async (data) => {
     try {
+      setIsSubmitting(true);
       const attachments: AttachmentProps[] = [];
       const candidateData = {
         first_name: data.first_name ?? "N/A",
@@ -150,6 +151,7 @@ const ApplicationForm = ({ id }: { id: string }) => {
       router.push(`/jobs/${id}/applications-list`);
       const result = await response.json();
     } catch (error) {
+      setIsSubmitting(false);
       console.error("Error submitting application:", error);
     }
   };
@@ -187,7 +189,15 @@ const ApplicationForm = ({ id }: { id: string }) => {
     }
   };
 
-  const handlePreviewButton = () => {
+  const handleApplyButton = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    setPreview(false);
+    handleSubmit(onSubmit)();
+  };
+
+  const handlePreviewButton = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    setIsSubmitting(false);
     setPreview(true);
   };
 
@@ -215,7 +225,7 @@ const ApplicationForm = ({ id }: { id: string }) => {
             </div>
           </div>
           <Divider />
-          <form onSubmit={handleSubmit(onSubmit)} className="">
+          <form className="">
             {job?.questions?.map((question) => (
               <div
                 className="my-7 flex w-full flex-col items-start gap-2"
@@ -333,6 +343,7 @@ const ApplicationForm = ({ id }: { id: string }) => {
               </Link>
               <Button
                 className="!rounded-full !px-2 !py-1"
+                type="button"
                 onClick={handlePreviewButton}
               >
                 <p className="text-sm">Preview</p>
@@ -353,7 +364,7 @@ const ApplicationForm = ({ id }: { id: string }) => {
                     <Button
                       className="!rounded-full !px-2 !py-1"
                       type="submit"
-                      onClick={() => setPreview(false)}
+                      onClick={handleApplyButton}
                     >
                       <p className="text-sm">Apply</p>
                     </Button>

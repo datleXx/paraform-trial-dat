@@ -91,35 +91,32 @@ const ApplicationsList = ({ params }: Props) => {
         </Button>
       </div>
       <Divider />
-      {applications?.length === 0 && !sync ? (
-        <div className="h-[calc(100vh-200px)]">
-          <Text>No applications yet</Text>
-        </div>
-      ) : (
-        <Table className="scrollbar-hide h-[calc(100vh-200px)] w-full overflow-y-scroll">
-          <TableHead>
-            <TableRow>
-              <TableCell className="font-semibold text-black">
-                First name
-              </TableCell>
-              <TableCell className="font-semibold text-black">
-                Last name
-              </TableCell>
-              <TableCell className="font-semibold text-black">Email</TableCell>
-              <TableCell className="font-semibold text-black">Phone</TableCell>
-              <TableCell className="font-semibold text-black">
-                Attachments
-              </TableCell>
-              <TableCell className="font-semibold text-black">
-                Published at
-              </TableCell>
-            </TableRow>
-          </TableHead>
-          {isLoading || sync ? (
-            <ApplicationListSkeleton />
-          ) : (
-            <TableBody className="max-h-[calc(100vh-200px)] w-full">
-              {candidates?.map((candidate) => (
+
+      <Table className="scrollbar-hide h-[calc(100vh-200px)] w-full overflow-y-scroll">
+        <TableHead>
+          <TableRow>
+            <TableCell className="font-semibold text-black">
+              First name
+            </TableCell>
+            <TableCell className="font-semibold text-black">
+              Last name
+            </TableCell>
+            <TableCell className="font-semibold text-black">Email</TableCell>
+            <TableCell className="font-semibold text-black">Phone</TableCell>
+            <TableCell className="font-semibold text-black">
+              Attachments
+            </TableCell>
+            <TableCell className="font-semibold text-black">
+              Published at
+            </TableCell>
+          </TableRow>
+        </TableHead>
+        {isLoading || isApplicationsLoading || sync ? (
+          <ApplicationListSkeleton />
+        ) : (
+          <TableBody className="max-h-[calc(100vh-200px)] w-full">
+            {candidates?.length && candidates?.length > 0 ? (
+              candidates?.map((candidate) => (
                 <TableRow
                   key={candidate.candidate?.id}
                   className="cursor-pointer hover:bg-gray-100"
@@ -158,11 +155,15 @@ const ApplicationsList = ({ params }: Props) => {
                     })}
                   </TableCell>
                 </TableRow>
-              ))}
-            </TableBody>
-          )}
-        </Table>
-      )}
+              ))
+            ) : (
+              <TableRow>
+                <TableCell colSpan={5}>No applications found</TableCell>
+              </TableRow>
+            )}
+          </TableBody>
+        )}
+      </Table>
     </Card>
   );
 };
