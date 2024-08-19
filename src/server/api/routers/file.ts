@@ -20,7 +20,7 @@ export const fileRouter = createTRPCRouter({
     .mutation(async ({ input }) => {
       try {
         const { fileName, fileType, fileBase64 } = input;
-        const key = `uploads/${fileType}/${Date.now()}-${fileName}`;
+        const key = `uploads/${fileType}/${fileName}`;
         const fileBuffer = Buffer.from(fileBase64, "base64");
         const result = await uploadObject(key, fileBuffer, fileType);
         return { ...result, fileType };

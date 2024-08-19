@@ -191,7 +191,9 @@ const ApplicationForm = ({ id }: { id: string }) => {
     setPreview(true);
   };
 
-  return isLoading || isSubmitting ? (
+  return isLoading ? (
+    <ApplicationFormSkeleton />
+  ) : isSubmitting ? (
     <ApplicationFormSkeleton />
   ) : (
     <div className="w-screen bg-gray-100">

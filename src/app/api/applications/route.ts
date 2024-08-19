@@ -120,9 +120,7 @@ export async function GET() {
                   await db.attachment.upsert({
                     where: {
                       id: Buffer.from(
-                        application.id.toString() +
-                          attachment.filename +
-                          attachment.url,
+                        application.id.toString() + attachment.filename,
                       ).toString("base64"),
                     },
                     update: {
@@ -133,9 +131,7 @@ export async function GET() {
                     },
                     create: {
                       id: Buffer.from(
-                        application.id.toString() +
-                          attachment.filename +
-                          attachment.url,
+                        application.id.toString() + attachment.filename,
                       ).toString("base64"),
                       filename: attachment.filename,
                       url: attachment.url,

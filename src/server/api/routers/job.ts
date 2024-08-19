@@ -30,6 +30,7 @@ export const jobRouter = createTRPCRouter({
           },
           include: {
             questions: true,
+            Application: true,
           },
         });
         return job;
